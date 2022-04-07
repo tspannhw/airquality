@@ -38,7 +38,7 @@ public class AirQualityService {
 
     @Value("${topic.name:airquality}")
 	String topicName;
-	
+
     /**
      * sendObservation to pulsar
      * 
@@ -53,7 +53,7 @@ public class AirQualityService {
         // move to bean
         ProducerBuilder<Observation> producerBuilder = pulsarClient.newProducer(JSONSchema.of(Observation.class))
                 .topic(topicName)
-                .producerName("airquality").sendTimeout(600, TimeUnit.SECONDS);
+                .producerName("airquality").sendTimeout(60, TimeUnit.SECONDS);
 
         Producer<Observation> producer = null;
         try {

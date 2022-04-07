@@ -19,70 +19,72 @@ import java.net.URL;
 
 @Configuration
 @EnableWebFlux
-public class WebFluxConfig implements WebFluxConfigurer
-{
+public class WebFluxConfig implements WebFluxConfigurer {
+	private static final String OFF = "off";
+
 	Logger log = LoggerFactory.getLogger(WebFluxConfig.class);
 
 	@Value("${airnowapi.url:http://localhost:8080}")
-    String airnowapi;
+	String airnowapi;
 
 	@Value("${pulsar.service.url:pulsar://localhost:6650}")
-    String pulsarUrl;
+	String pulsarUrl;
+
+	@Value("${security.mode:off}")
+	String securityMode;
+
+	@Value("${pulsar.oauth2.audience:urn:sn:pulsar:sndemo:demo-cluster}")
+	String audience;
+
+	@Value("${pulsar.oauth2.credentials-url:file:///Users/tspann/Downloads/sndemo-tspann.json}")
+	String credentialsUrl;
+
+	@Value("${pulsar.oauth2.issuer-url:https://auth.streamnative.cloud/}")
+	String issuerUrl;
 
 	/**
-	 * Secured
-	 * 
-	 * @return pulsarClient
-	 */
-	public org.apache.pulsar.client.api.PulsarClient pulsarClient(String issuerUrl,
-	String credentialsUrl, String audience) {
-		PulsarClient client = null;
-		
-		try {
-			try {
-				client = PulsarClient.builder()
-				        .serviceUrl(pulsarUrl)
-						.authentication(
-								AuthenticationFactoryOAuth2.clientCredentials(
-									new URL(issuerUrl),
-									new URL(credentialsUrl), audience))
-									.build();
-			} catch (MalformedURLException e) {
-				log.error("bad url", e);
-			}
-		} catch (PulsarClientException e) {
-			log.error("pulsar connection failed", e);
-			client = null;
-		}
-
-		return client;
-	}
-
-	/**
-	 * @param brokerUrl   url of pulsar
+	 * @param brokerUrl url of pulsar
 	 * @return pulsarClient
 	 */
 	@Bean
 	public org.apache.pulsar.client.api.PulsarClient pulsarClient() {
 		PulsarClient client = null;
-		
-		try {
-			client = PulsarClient.builder().serviceUrl(pulsarUrl).build();
-		} catch (PulsarClientException e) {
-			log.error("bad url", e);
-			client = null;
+
+		if (securityMode.equalsIgnoreCase(OFF)) {
+			try {
+				client = PulsarClient.builder().serviceUrl(pulsarUrl).build();
+			} catch (PulsarClientException e) {
+				log.error("bad url", e);
+				client = null;
+			}
+		} else {
+			try {
+				try {
+					client = PulsarClient.builder()
+							.serviceUrl(pulsarUrl)
+							.authentication(
+									AuthenticationFactoryOAuth2.clientCredentials(
+											new URL(issuerUrl),
+											new URL(credentialsUrl),
+											audience))
+							.build();
+				} catch (MalformedURLException e) {
+					log.error("bad url", e);
+				}
+			} catch (PulsarClientException e) {
+				log.error("pulsar connection failed", e);
+				client = null;
+			}
 		}
 
 		return client;
 	}
-	
 
 	@Bean
-	public WebClient getWebClient()
-	{
+	public WebClient getWebClient() {
 		return WebClient.builder()
-		        .baseUrl(airnowapi)
-		        .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-		        .build();
+				.baseUrl(airnowapi)
+				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+				.build();
 	}
 }
