@@ -14,8 +14,16 @@ Timothy Spann
 
 ````
 airnowapi.url=${AIRPORTNOWAPIURL}
-pulsar.service.url=pulsar://pulsar1:6650
 topic.name=persistent://public/default/airquality
+producer.name=airquality
+send.timeout=60
+security.mode=on
+#off
+#pulsar.service.url=pulsar://pulsar1:6650
+pulsar.service.url=pulsar+ssl://demo.demo.snio.cloud:6651
+pulsar.oauth2.audience=urn:sn:pulsar:demo:demo-cluster
+pulsar.oauth2.credentials-url=file:///Users/tspann/Downloads/sndemo-tspann.json
+pulsar.oauth2.issuer-url=https://auth.streamnative.cloud/
 ````
 
 ### Example Run
@@ -77,3 +85,7 @@ key:[7a7f567a-b9d7-470e-992e-86a2c24c9ce8], properties:[], content:{"dateObserve
 
 * http://feeds.enviroflash.info/rss/forecast/479.xml
 * http://feeds.enviroflash.info/
+
+### Other Projects
+
+* https://github.com/tspannhw/FLiPN-AirQuality-REST
