@@ -26,6 +26,116 @@ pulsar.oauth2.credentials-url=file:///Users/tspann/Downloads/sndemo-tspann.json
 pulsar.oauth2.issuer-url=https://auth.streamnative.cloud/
 ````
 
+### Spark Run
+
+````
+val dfPulsar = spark.readStream.format("pulsar").option("service.url", "pulsar://pulsar1:6650").option("admin.url", "http://pulsar1:8080").option("topic", "persistent://public/default/airquality").load()
+
+dfPulsar.printSchema()
+
+scala> dfPulsar.printSchema()
+root
+ |-- additionalProperties: map (nullable = true)
+ |    |-- key: string
+ |    |-- value: struct (valueContainsNull = false)
+ |-- aqi: integer (nullable = true)
+ |-- category: struct (nullable = true)
+ |    |-- additionalProperties: map (nullable = true)
+ |    |    |-- key: string
+ |    |    |-- value: struct (valueContainsNull = false)
+ |    |-- name: string (nullable = true)
+ |    |-- number: integer (nullable = true)
+ |-- dateObserved: string (nullable = true)
+ |-- hourObserved: integer (nullable = true)
+ |-- latitude: double (nullable = true)
+ |-- localTimeZone: string (nullable = true)
+ |-- longitude: double (nullable = true)
+ |-- parameterName: string (nullable = true)
+ |-- reportingArea: string (nullable = true)
+ |-- stateCode: string (nullable = true)
+ |-- __key: binary (nullable = true)
+ |-- __topic: string (nullable = true)
+ |-- __messageId: binary (nullable = true)
+ |-- __publishTime: timestamp (nullable = true)
+ |-- __eventTime: timestamp (nullable = true)
+ |-- __messageProperties: map (nullable = true)
+ |    |-- key: string
+ |    |-- value: string (valueContainsNull = true)
+
+
+
+## Example Queries
+
+val pQuery = dfPulsar.selectExpr("*").writeStream.format("console").option("truncate", false).start()
+
+val pQuery = dfPulsar.selectExpr("CAST(__key AS STRING)", 
+                                 "CAST(aqi AS INTEGER)",
+                                 "CAST(dateObserved AS STRING)",
+                                 "CAST(hourObserved AS INTEGER)",
+                                 "CAST(latitude AS DOUBLE)",
+                                 "CAST(localTimeZone AS STRING)",
+                                 "CAST(longitude AS DOUBLE)",
+                                 "CAST(parameterName AS STRING)",
+                                 "CAST(reportingArea AS STRING)",
+                                 "CAST(stateCode AS STRING)")
+                                 .as[(String, Integer, String, Integer, Double, String, Double, String, String, String)]
+            .writeStream.format("csv")
+            .option("truncate", "false")
+            .option("header", true)
+            .option("path", "/opt/demo/airquality")
+            .option("checkpointLocation", "/tmp/checkpoint")
+            .start()
+
+
+pQuery.explain()
+
+
+pQuery: org.apache.spark.sql.DataFrame = [__key: string, aqi: int ... 8 more fields]
+
+scala>                                  .as[(String, Integer, String, Integer, Double, String, Double, String, String, String)]
+res7: org.apache.spark.sql.Dataset[(String, Integer, String, Integer, Double, String, Double, String, String, String)] = [__key: string, aqi: int ... 8 more fields]
+
+scala>             .writeStream.format("csv")
+res8: org.apache.spark.sql.streaming.DataStreamWriter[(String, Integer, String, Integer, Double, String, Double, String, String, String)] = org.apache.spark.sql.streaming.DataStreamWriter@28af99b4
+
+scala>             .option("truncate", "false")
+res9: org.apache.spark.sql.streaming.DataStreamWriter[(String, Integer, String, Integer, Double, String, Double, String, String, String)] = org.apache.spark.sql.streaming.DataStreamWriter@28af99b4
+
+scala>             .option("header", true)
+res10: org.apache.spark.sql.streaming.DataStreamWriter[(String, Integer, String, Integer, Double, String, Double, String, String, String)] = org.apache.spark.sql.streaming.DataStreamWriter@28af99b4
+
+scala>             .option("path", "/opt/demo/airquality")
+res11: org.apache.spark.sql.streaming.DataStreamWriter[(String, Integer, String, Integer, Double, String, Double, String, String, String)] = org.apache.spark.sql.streaming.DataStreamWriter@28af99b4
+
+scala>             .option("checkpointLocation", "/tmp/checkpoint")
+res12: org.apache.spark.sql.streaming.DataStreamWriter[(String, Integer, String, Integer, Double, String, Double, String, String, String)] = org.apache.spark.sql.streaming.DataStreamWriter@28af99b4
+
+scala>             .start()
+22/04/07 17:43:34 WARN ResolveWriteToStream: spark.sql.adaptive.enabled is not supported in streaming DataFrames/Datasets and will be disabled.
+res13: org.apache.spark.sql.streaming.StreamingQuery = org.apache.spark.sql.execution.streaming.StreamingQueryWrapper@29b96be0
+
+pQuery.explain()                                                                
+== Physical Plan ==
+*(1) Project [cast(__key#28 as string) AS __key#156, aqi#18, dateObserved#20, hourObserved#21, latitude#22, localTimeZone#23, longitude#24, parameterName#25, reportingArea#26, stateCode#27]
++- StreamingRelation pulsar, [additionalProperties#17, aqi#18, category#19, dateObserved#20, hourObserved#21, latitude#22, localTimeZone#23, longitude#24, parameterName#25, reportingArea#26, stateCode#27, __key#28, __topic#29, __messageId#30, __publishTime#31, __eventTime#32, __messageProperties#33]
+
+
+
+drwxr-xr-x 2 root root 4096 Apr  7 17:44 _spark_metadata
+-rw-r--r-- 1 root root  282 Apr  7 17:44 part-00000-249b23ad-ed90-4cd6-a8d1-3adbe7976815-c000.csv
+-rw-r--r-- 1 root root  192 Apr  7 17:44 part-00000-24a6f1a6-1b71-4087-ac53-67739a1090d1-c000.csv
+-rw-r--r-- 1 root root  282 Apr  7 17:44 part-00000-b3c5c7e8-a06e-4aa2-a321-45ce213e8bd4-c000.csv
+-rw-r--r-- 1 root root  192 Apr  7 17:44 part-00000-ad4e60c8-6d55-4cd8-aea4-a5314272dc25-c000.csv
+-rw-r--r-- 1 root root  107 Apr  7 17:43 part-00000-3c10eaf9-17e9-46fe-b58b-d8121f02c850-c000.csv
+root@pulsar1:/opt/demo/airquality# cat part-00000-249b23ad-ed90-4cd6-a8d1-3adbe7976815-c000.csv
+__key,aqi,dateObserved,hourObserved,latitude,localTimeZone,longitude,parameterName,reportingArea,stateCode
+8107a050-1c59-4d67-aabd-9752156662c5,16,2022-04-07,16,33.65,EST,-84.43,PM2.5,Atlanta,GA
+11bd646a-f464-4035-9095-3376e5a55c8e,14,2022-04-07,16,33.65,EST,-84.43,PM10,Atlanta,GA
+
+
+
+````
+
 ### Example Run
 
 ````
