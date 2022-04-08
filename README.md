@@ -184,6 +184,26 @@ CREATE CATALOG pulsar WITH (
 USE CATALOG pulsar;
 
 SHOW TABLES;
+
+Flink SQL> describe airquality;
++----------------------+-----------------------------------------------------------------------------------------------+------+-----+--------+-----------+
+|                 name |                                                                                          type | null | key | extras | watermark |
++----------------------+-----------------------------------------------------------------------------------------------+------+-----+--------+-----------+
+| additionalProperties |                                                          MAP<STRING NOT NULL, ROW<> NOT NULL> | true |     |        |           |
+|                  aqi |                                                                                           INT | true |     |        |           |
+|             category | ROW<`additionalProperties` MAP<STRING NOT NULL, ROW<> NOT NULL>, `name` STRING, `number` INT> | true |     |        |           |
+|         dateObserved |                                                                                        STRING | true |     |        |           |
+|         hourObserved |                                                                                           INT | true |     |        |           |
+|             latitude |                                                                                        DOUBLE | true |     |        |           |
+|        localTimeZone |                                                                                        STRING | true |     |        |           |
+|            longitude |                                                                                        DOUBLE | true |     |        |           |
+|        parameterName |                                                                                        STRING | true |     |        |           |
+|        reportingArea |                                                                                        STRING | true |     |        |           |
+|            stateCode |                                                                                        STRING | true |     |        |           |
++----------------------+-----------------------------------------------------------------------------------------------+------+-----+--------+-----------+
+
+select aqi, parameterName, dateObserved, hourObserved, latitude, longitude, localTimeZone, stateCode, reportingArea from airquality
+
 ````
 
 
