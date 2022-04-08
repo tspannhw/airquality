@@ -1,4 +1,4 @@
-package dev.datainmotion.airquality.airquality;
+package dev.datainmotion.airquality.config;
 
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
@@ -16,10 +16,37 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import dev.datainmotion.airquality.model.Observation;
+import reactor.core.publisher.Flux;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import org.apache.pulsar.client.api.MessageId;
+import org.apache.pulsar.client.api.Producer;
+import org.apache.pulsar.client.api.ProducerBuilder;
+import org.apache.pulsar.client.api.PulsarClient;
+import org.apache.pulsar.client.api.PulsarClientException;
+import org.apache.pulsar.client.impl.schema.JSONSchema;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+
+import java.time.Duration;
+import java.util.UUID;
 
 @Configuration
 @EnableWebFlux
 public class WebFluxConfig implements WebFluxConfigurer {
+	
+	private static final String PULSAR_CONNECTION_FAILED = "pulsar connection failed";
+
+	private static final String BAD_URL = "bad url";
+
 	private static final String OFF = "off";
 
 	Logger log = LoggerFactory.getLogger(WebFluxConfig.class);
@@ -54,7 +81,7 @@ public class WebFluxConfig implements WebFluxConfigurer {
 			try {
 				client = PulsarClient.builder().serviceUrl(pulsarUrl).build();
 			} catch (PulsarClientException e) {
-				log.error("bad url", e);
+				log.error(BAD_URL, e);
 				client = null;
 			}
 		} else {
@@ -69,10 +96,10 @@ public class WebFluxConfig implements WebFluxConfigurer {
 											audience))
 							.build();
 				} catch (MalformedURLException e) {
-					log.error("bad url", e);
+					log.error(BAD_URL, e);
 				}
 			} catch (PulsarClientException e) {
-				log.error("pulsar connection failed", e);
+				log.error(PULSAR_CONNECTION_FAILED, e);
 				client = null;
 			}
 		}

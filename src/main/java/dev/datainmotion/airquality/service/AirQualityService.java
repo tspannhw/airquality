@@ -1,9 +1,9 @@
-package dev.datainmotion.airquality.airquality.service;
+package dev.datainmotion.airquality.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import dev.datainmotion.airquality.airquality.model.Observation;
+import dev.datainmotion.airquality.model.Observation;
 import reactor.core.publisher.Flux;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -36,8 +36,8 @@ public class AirQualityService {
     @Autowired
     PulsarClient pulsarClient;
 
-    @Value("${topic.name:airquality}")
-	String topicName;
+    @Autowired
+    ProducerBuilder<Observation> producerBuilder;
 
     /**
      * sendObservation to pulsar
@@ -49,11 +49,6 @@ public class AirQualityService {
         if (observation == null) {
             return null;
         }
-
-        // move to bean
-        ProducerBuilder<Observation> producerBuilder = pulsarClient.newProducer(JSONSchema.of(Observation.class))
-                .topic(topicName)
-                .producerName("airquality").sendTimeout(60, TimeUnit.SECONDS);
 
         Producer<Observation> producer = null;
         try {

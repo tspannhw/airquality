@@ -1,4 +1,4 @@
-package dev.datainmotion.airquality.airquality.model;
+package dev.datainmotion.airquality.model;
 
 import java.util.HashMap;
 import java.util.Map;

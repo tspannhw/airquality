@@ -1,10 +1,10 @@
-package dev.datainmotion.airquality.airquality;
+package dev.datainmotion.airquality;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import dev.datainmotion.airquality.airquality.model.Observation;
-import dev.datainmotion.airquality.airquality.service.AirQualityService;
+import dev.datainmotion.airquality.model.Observation;
+import dev.datainmotion.airquality.service.AirQualityService;
 import java.util.List;
 
 import org.apache.pulsar.client.api.MessageId;
