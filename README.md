@@ -199,3 +199,11 @@ key:[7a7f567a-b9d7-470e-992e-86a2c24c9ce8], properties:[], content:{"dateObserve
 ### Other Projects
 
 * https://github.com/tspannhw/FLiPN-AirQuality-REST
+
+### CVE Note
+
+We are using Spring Boot 2.6.6 which does not have this issue.
+
+https://thenewstack.io/springshell-brings-hell-to-java-developers/
+
+
