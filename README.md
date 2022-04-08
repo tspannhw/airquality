@@ -171,6 +171,22 @@ export AIRPORTNOWAPIURL="https://www.airnowapi.org/aq/observation/zipCode/curren
 
 ````
 
+### Flink
+
+````
+CREATE CATALOG pulsar WITH (
+   'type' = 'pulsar',
+   'service-url' = 'pulsar://pulsar1:6650',
+   'admin-url' = 'http://pulsar1:8080',
+   'format' = 'json'
+);
+
+USE CATALOG pulsar;
+
+SHOW TABLES;
+````
+
+
 ### Command Line Consumer
 
 ````
