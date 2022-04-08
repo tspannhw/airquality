@@ -37,7 +37,7 @@ public class AirQualityService {
     PulsarClient pulsarClient;
 
     @Autowired
-    ProducerBuilder<Observation> producerBuilder;
+    Producer<Observation> producer;
 
     /**
      * sendObservation to pulsar
@@ -47,16 +47,6 @@ public class AirQualityService {
      */
     public MessageId sendObservation(Observation observation) {
         if (observation == null) {
-            return null;
-        }
-
-        Producer<Observation> producer = null;
-        try {
-            producer = producerBuilder.create();
-        } catch (PulsarClientException e1) {
-            e1.printStackTrace();
-        }
-        if ( producer == null) {
             return null;
         }
 
@@ -72,11 +62,6 @@ public class AirQualityService {
             e.printStackTrace();
         }
 
-        try {
-            producer.close();
-        } catch (PulsarClientException e) {
-            e.printStackTrace();
-        }
         return msgID;
     }
 

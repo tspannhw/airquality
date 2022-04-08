@@ -52,12 +52,18 @@ public class PulsarProducerConfig {
     PulsarClient pulsarClient;
     
     @Bean
-	public ProducerBuilder<Observation>  getProducer() {
+	public Producer<Observation>  getProducer() {
         ProducerBuilder<Observation> producerBuilder = pulsarClient.newProducer(JSONSchema.of(Observation.class))
                 .topic(topicName)
                 .producerName(producerName).sendTimeout(60, TimeUnit.SECONDS);
 
-		return producerBuilder;
-	}
+		Producer<Observation> producer = null;
+		try {
+			producer = producerBuilder.create();
+		} catch (PulsarClientException e1) {
+			e1.printStackTrace();
+		}
 
+		return producer;
+	}
 }

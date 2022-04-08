@@ -70,7 +70,6 @@ public class WebFluxConfig implements WebFluxConfigurer {
 	String issuerUrl;
 
 	/**
-	 * @param brokerUrl url of pulsar
 	 * @return pulsarClient
 	 */
 	@Bean
