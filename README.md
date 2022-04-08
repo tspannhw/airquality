@@ -204,6 +204,10 @@ Flink SQL> describe airquality;
 
 select aqi, parameterName, dateObserved, hourObserved, latitude, longitude, localTimeZone, stateCode, reportingArea from airquality
 
+select max(aqi) as MaxAQI, parameterName, reportingArea from airquality group by parameterName, reportingArea;
+
+select max(aqi) as MaxAQI, min(aqi) as MinAQI, avg(aqi) as AvgAQI, count(aqi) as RowCount, parameterName, reportingArea from airquality group by parameterName, reportingArea;
+
 ````
 
 
