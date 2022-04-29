@@ -1,5 +1,6 @@
 package dev.datainmotion.airquality.service;
 
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -32,38 +33,6 @@ public class AirQualityService {
 
     @Autowired
     WebClient webClient;
-
-    @Autowired
-    PulsarClient pulsarClient;
-
-    @Autowired
-    Producer<Observation> producer;
-
-    /**
-     * sendObservation to pulsar
-     * 
-     * @param observation
-     * @return MessageId
-     */
-    public MessageId sendObservation(Observation observation) {
-        if (observation == null) {
-            return null;
-        }
-
-        UUID uuidKey = UUID.randomUUID();
-
-        MessageId msgID = null;
-        try {
-            msgID = producer.newMessage()
-                    .key(uuidKey.toString())
-                    .value(observation)
-                    .send();
-        } catch (PulsarClientException e) {
-            e.printStackTrace();
-        }
-
-        return msgID;
-    }
 
     /**
      * 
