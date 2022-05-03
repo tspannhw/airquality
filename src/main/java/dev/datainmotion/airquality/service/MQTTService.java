@@ -35,11 +35,12 @@ public class MQTTService {
      */
     public void publish(final Observation payload)
             throws MqttPersistenceException, MqttException {
+        System.out.println("Publish MQTT");
         MqttMessage mqttMessage = new MqttMessage();
         mqttMessage.setPayload(DataUtility.serialize(payload));
         mqttMessage.setQos(0);
         mqttMessage.setRetained(true);
         mqttClient.publish(topicName, mqttMessage);
-        // mqttClient.disconnect();
+        System.out.println("MQTT sent" + mqttMessage.getId());
     }
 }

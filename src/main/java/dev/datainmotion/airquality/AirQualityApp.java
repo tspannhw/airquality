@@ -73,8 +73,6 @@ public class AirQualityApp implements CommandLineRunner {
 			}
 			try {
 				amqpService.sendObservation(observation2);
-
-				System.out.println("AMQP sent");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
