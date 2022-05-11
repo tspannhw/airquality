@@ -27,7 +27,6 @@ public class AirQualityService {
      * @return list of observations from json
      */
     public List<Observation> fetchCurrentObservation() {
-
         List<Observation> obs = null;
 
         try {

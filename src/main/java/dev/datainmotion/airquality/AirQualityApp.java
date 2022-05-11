@@ -45,9 +45,6 @@ public class AirQualityApp implements CommandLineRunner {
 	@Autowired
 	private PulsarService pulsarService;
 
-	//@Autowired
-	//private KafkaService kafkaService;
-
 	@Autowired
 	private AMQPService amqpService;
 
@@ -58,7 +55,6 @@ public class AirQualityApp implements CommandLineRunner {
 		List<Observation> obsList = airQualityService.fetchCurrentObservation();
 		MessageId msgId = null;
 		for (Observation observation2 : obsList) {
-
 			try {
 				msgId = pulsarService.sendObservation(observation2);
 				log.info(msgId.toString());
@@ -76,12 +72,6 @@ public class AirQualityApp implements CommandLineRunner {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
-//			try {
-//				kafkaService.sendMessage(observation2);
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
 		}
 	}
 
@@ -94,6 +84,5 @@ public class AirQualityApp implements CommandLineRunner {
 
 	@Override
     public void run(String... args) {
-
     }
 }

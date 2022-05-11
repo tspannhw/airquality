@@ -38,21 +38,22 @@ public class KafkaService {
                 uuidKey.toString(),
                 message);
 
-        kafkaTemplate.send(producerRecord);
-//        ListenableFuture<SendResult<String, Observation>> future =
-//                kafkaTemplate.send(producerRecord);
-//
-//        future.addCallback(new ListenableFutureCallback<SendResult<String, Observation>>() {
-//            @Override
-//            public void onSuccess(SendResult<String, Observation> result) {
-//                System.out.println("Sent message=[" + message +
-//                        "] with offset=[" + result.getRecordMetadata().offset() + "]");
-//            }
-//            @Override
-//            public void onFailure(Throwable ex) {
-//                System.out.println("Unable to send message=["
-//                        + message + "] due to : " + ex.getMessage());
-//            }
-//        });
+        final ListenableFuture<SendResult<String, Observation>> send = kafkaTemplate.send(producerRecord);
+        System.out.println("send kafka" + producerRecord.toString());
+
+//        kafkaTemplate.send(producerRecord);
+
+        send.addCallback(new ListenableFutureCallback<SendResult<String, Observation>>() {
+
+            @Override
+            public void onSuccess(final SendResult<String, Observation> message) {
+                log.error("sent message= " + message + " with offset= " + message.getRecordMetadata().offset());
+            }
+
+            @Override
+            public void onFailure(final Throwable throwable) {
+                log.error("unable to send message= " + message, throwable);
+            }
+        });
     }
 }
