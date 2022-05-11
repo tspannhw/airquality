@@ -1,13 +1,13 @@
 package dev.datainmotion.airquality;
 
+import dev.datainmotion.airquality.config.MQTTConfig;
 import dev.datainmotion.airquality.config.PulsarConfig;
 import dev.datainmotion.airquality.config.PulsarProducerConfig;
 import dev.datainmotion.airquality.model.Observation;
-import dev.datainmotion.airquality.service.AirQualityService;
-import dev.datainmotion.airquality.service.PulsarService;
+import dev.datainmotion.airquality.service.MQTTService;
 import org.apache.pulsar.client.api.MessageId;
-import org.apache.pulsar.client.api.Producer;
-import org.apache.pulsar.client.api.PulsarClient;
+import org.eclipse.paho.client.mqttv3.IMqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,26 +15,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.testng.Assert.assertNotNull;
-
+import static org.testng.Assert.fail;
 
 @SpringBootTest(
         classes = {
-                PulsarConfig.class,
-                PulsarProducerConfig.class,
-                PulsarService.class
+                MQTTConfig.class,
+                MQTTService.class
         }
 )
-public class AirQualityAppTests {
-    private static final Logger log = LoggerFactory.getLogger(AirQualityAppTests.class);
+public class MQTTSenderTest {
+    private static final Logger log = LoggerFactory.getLogger(MQTTSenderTest.class);
 
     @Autowired
-    PulsarClient pulsarClient;
+    private IMqttClient mqttClient;
 
     @Autowired
-    Producer<Observation> producer;
-
-    @Autowired
-    private PulsarService pulsarService;
+    private MQTTService mqttService;
 
     private Observation createTestObservation() {
         Observation observation = new Observation();
@@ -48,10 +44,14 @@ public class AirQualityAppTests {
         observation.setStateCode("GA");
         return observation;
     }
+
     @Test
     void contextLoads() {
-        MessageId messageId = pulsarService.sendObservation(createTestObservation());
-        assertNotNull(messageId);
-        log.debug(String.valueOf(messageId));
+        try {
+            mqttService.publish(createTestObservation());
+        } catch (MqttException e) {
+            e.printStackTrace();
+            fail();
+        }
     }
 }
