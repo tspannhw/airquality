@@ -38,7 +38,6 @@ public class PulsarService {
         }
 
         UUID uuidKey = UUID.randomUUID();
-
         MessageId msgID = null;
         try {
             msgID = producer.newMessage()
