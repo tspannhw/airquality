@@ -32,5 +32,7 @@ public class AMQPService {
                 }
                 rabbitTemplate.convertAndSend(topicName,
                         DataUtility.serializeToJSON(observation));
+
+                System.out.println("AMQP Sent");
         }
 }

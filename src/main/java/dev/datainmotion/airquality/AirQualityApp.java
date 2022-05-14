@@ -48,12 +48,18 @@ public class AirQualityApp implements CommandLineRunner {
 	@Autowired
 	private AMQPService amqpService;
 
+	@Autowired
+	private KafkaService kafkaService;
+
 	/**
 	 * get rows
 	 */
 	private void getRows() {
 		List<Observation> obsList = airQualityService.fetchCurrentObservation();
 		MessageId msgId = null;
+		if (obsList == null || obsList.size() <= 0) {
+			return;
+		}
 		for (Observation observation2 : obsList) {
 			try {
 				msgId = pulsarService.sendObservation(observation2);
@@ -61,14 +67,21 @@ public class AirQualityApp implements CommandLineRunner {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
 			try {
 				mqttService.publish(observation2);
+				log.info("mqtt");
+
 			} catch (MqttException e) {
 				e.printStackTrace();
 			}
 			try {
 				amqpService.sendObservation(observation2);
+				log.info("amqp");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			try {
+				kafkaService.sendMessage(observation2);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -78,11 +91,11 @@ public class AirQualityApp implements CommandLineRunner {
 	@Scheduled(initialDelay = 0, fixedRate = 10000)
 	public void repeatRun()
 	{
-		log.debug("Repeat Run. Current time is :: " + Calendar.getInstance().getTime());
 		getRows();
 	}
 
 	@Override
     public void run(String... args) {
+		getRows();
     }
 }

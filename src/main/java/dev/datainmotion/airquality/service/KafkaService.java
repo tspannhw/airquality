@@ -1,18 +1,22 @@
 package dev.datainmotion.airquality.service;
 
 import dev.datainmotion.airquality.model.Observation;
+import dev.datainmotion.airquality.util.DataUtility;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
 import java.util.UUID;
+import java.util.concurrent.Future;
 
 /**
  * service for kafka messages
@@ -22,38 +26,25 @@ public class KafkaService {
     private static final Logger log = LoggerFactory.getLogger(KafkaService.class);
 
     @Autowired
-    private KafkaTemplate<String, Observation> kafkaTemplate;
+    private KafkaTemplate<String, String> kafkaTemplate;
 
-    @Value("${kafka.topic.name:airqualitykafka}")
+    @Value("${kafka.topic.name:airqualitykafka2}")
     String topicName;
 
     /**
      * send message to kafka
      * @param message Observation
      */
+    @Async
     public void sendMessage(Observation message) {
         UUID uuidKey = UUID.randomUUID();
 
-        ProducerRecord<String, Observation> producerRecord = new ProducerRecord<>(topicName,
+        ProducerRecord<String, String> producerRecord = new ProducerRecord<>(topicName,
                 uuidKey.toString(),
-                message);
+                DataUtility.serializeToJSON(message));
 
-        final ListenableFuture<SendResult<String, Observation>> send = kafkaTemplate.send(producerRecord);
-        System.out.println("send kafka" + producerRecord.toString());
+       kafkaTemplate.send(producerRecord);
 
-//        kafkaTemplate.send(producerRecord);
-
-        send.addCallback(new ListenableFutureCallback<SendResult<String, Observation>>() {
-
-            @Override
-            public void onSuccess(final SendResult<String, Observation> message) {
-                log.error("sent message= " + message + " with offset= " + message.getRecordMetadata().offset());
-            }
-
-            @Override
-            public void onFailure(final Throwable throwable) {
-                log.error("unable to send message= " + message, throwable);
-            }
-        });
-    }
+       log.info("KAFKA MSG SENT");
+   }
 }

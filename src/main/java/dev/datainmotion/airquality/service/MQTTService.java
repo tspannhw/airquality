@@ -36,7 +36,7 @@ public class MQTTService {
             throws MqttPersistenceException, MqttException {
         MqttMessage mqttMessage = new MqttMessage();
         mqttMessage.setPayload(DataUtility.serialize(payload));
-        mqttMessage.setQos(0);
+        mqttMessage.setQos(1);
         mqttMessage.setRetained(true);
         mqttClient.publish(topicName, mqttMessage);
     }
