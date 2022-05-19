@@ -46,7 +46,7 @@ import java.util.UUID;
 @EnableWebFlux
 public class WebFluxConfig implements WebFluxConfigurer {
 	private static final String DEFAULT_ZIPCODE = "08520";
-	
+
 	Logger log = LoggerFactory.getLogger(WebFluxConfig.class);
 
 	@Value("${airnowapi.url:http://localhost:8080}")
