@@ -36,7 +36,9 @@ public class MQTTConfig {
                                   @Value("${mqtt.hostname}") String hostname,
                                   @Value("${mqtt.port}") int port) throws MqttException {
         MemoryPersistence persistence = new MemoryPersistence();
-        IMqttClient mqttClient = new MqttClient("tcp://" + hostname + ":" + port, clientId, persistence);
+        IMqttClient mqttClient = new MqttClient("tcp://" + hostname + ":" + port,
+                                                clientId,
+                                                persistence);
         mqttClient.connect(mqttConnectOptions());
         return mqttClient;
     }

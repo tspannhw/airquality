@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 /**
- *
+ * send rabbitmq / amqp messages
  */
 @Service
 public class AMQPService {
@@ -32,7 +32,5 @@ public class AMQPService {
                 }
                 rabbitTemplate.convertAndSend(topicName,
                         DataUtility.serializeToJSON(observation));
-
-                System.out.println("AMQP Sent");
         }
 }

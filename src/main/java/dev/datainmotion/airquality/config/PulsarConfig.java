@@ -73,7 +73,6 @@ public class PulsarConfig {
 				client = null;
 			}
 		}
-
 		return client;
 	}
 }

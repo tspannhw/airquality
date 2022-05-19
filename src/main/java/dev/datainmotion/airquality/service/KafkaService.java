@@ -38,13 +38,9 @@ public class KafkaService {
     @Async
     public void sendMessage(Observation message) {
         UUID uuidKey = UUID.randomUUID();
-
         ProducerRecord<String, String> producerRecord = new ProducerRecord<>(topicName,
                 uuidKey.toString(),
                 DataUtility.serializeToJSON(message));
-
        kafkaTemplate.send(producerRecord);
-
-       log.info("KAFKA MSG SENT");
    }
 }

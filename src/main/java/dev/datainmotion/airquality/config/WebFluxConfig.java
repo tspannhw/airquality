@@ -21,7 +21,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import dev.datainmotion.airquality.model.Observation;
 import reactor.core.publisher.Flux;
+
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -42,15 +45,41 @@ import java.util.UUID;
 @Configuration
 @EnableWebFlux
 public class WebFluxConfig implements WebFluxConfigurer {
+	private static final String DEFAULT_ZIPCODE = "08520";
+	
 	Logger log = LoggerFactory.getLogger(WebFluxConfig.class);
 
 	@Value("${airnowapi.url:http://localhost:8080}")
 	String airnowapi;
 
+	@Value("${zipcodes}")
+	String[] arrayOfStrings;
+
+	/** todo move array list to spring properties */
+	public String getZipCode() {
+		Random rand = new Random();
+		String zipCode = null;
+
+		try {
+			zipCode= arrayOfStrings[rand.nextInt(arrayOfStrings.length)];
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		if ( zipCode == null || zipCode.trim().length() <= 0) {
+			zipCode = arrayOfStrings[0];
+		}
+
+		if ( zipCode == null || zipCode.trim().length() <= 0) {
+			zipCode = DEFAULT_ZIPCODE;
+		}
+
+		return zipCode;
+	}
 	@Bean
 	public WebClient getWebClient() {
 		return WebClient.builder()
-				.baseUrl(airnowapi)
+				.baseUrl(airnowapi + getZipCode())
 				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
 				.build();
 	}

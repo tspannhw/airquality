@@ -6,6 +6,9 @@ import dev.datainmotion.airquality.model.Observation;
 
 import java.util.Locale;
 
+/**
+ *
+ */
 public class DataUtility {
 
     /**
@@ -48,5 +51,4 @@ public class DataUtility {
 
         return String.format(Locale.US, "%s", json).getBytes();
     }
-
 }

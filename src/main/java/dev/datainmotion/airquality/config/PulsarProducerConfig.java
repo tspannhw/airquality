@@ -37,7 +37,6 @@ public class PulsarProducerConfig {
         } catch (PulsarClientException e1) {
             e1.printStackTrace();
         }
-
         return producer;
     }
 }
