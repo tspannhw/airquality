@@ -45,41 +45,22 @@ import java.util.UUID;
 @Configuration
 @EnableWebFlux
 public class WebFluxConfig implements WebFluxConfigurer {
-	private static final String DEFAULT_ZIPCODE = "08520";
-
 	Logger log = LoggerFactory.getLogger(WebFluxConfig.class);
 
 	@Value("${airnowapi.url:http://localhost:8080}")
 	String airnowapi;
 
-	@Value("${zipcodes}")
-	String[] arrayOfStrings;
-
-	/** todo move array list to spring properties */
-	public String getZipCode() {
-		Random rand = new Random();
-		String zipCode = null;
-
-		try {
-			zipCode= arrayOfStrings[rand.nextInt(arrayOfStrings.length)];
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		if ( zipCode == null || zipCode.trim().length() <= 0) {
-			zipCode = arrayOfStrings[0];
-		}
-
-		if ( zipCode == null || zipCode.trim().length() <= 0) {
-			zipCode = DEFAULT_ZIPCODE;
-		}
-
-		return zipCode;
-	}
 	@Bean
 	public WebClient getWebClient() {
 		return WebClient.builder()
-				.baseUrl(airnowapi + getZipCode())
+				.baseUrl(airnowapi + "08520")
+				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+				.build();
+	}
+	@Bean
+	public WebClient getWebClient(String zipCode) {
+		return WebClient.builder()
+				.baseUrl(airnowapi + zipCode)
 				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
 				.build();
 	}

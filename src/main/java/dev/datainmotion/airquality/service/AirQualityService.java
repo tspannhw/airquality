@@ -1,6 +1,7 @@
 package dev.datainmotion.airquality.service;
 
 import dev.datainmotion.airquality.model.Observation;
+import dev.datainmotion.airquality.util.DataUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class AirQualityService {
     @Autowired
     WebClient webClient;
 
+    @Autowired
+    DataUtility dataUtility;
+    
     /**
      * 
      * @return list of observations from json
@@ -30,6 +34,10 @@ public class AirQualityService {
         List<Observation> obs = null;
 
         try {
+            webClient.mutate().baseUrl(dataUtility.getURL()) ;
+
+            log.error(dataUtility.getURL());
+
             Flux<Observation> observationFlux = webClient
                     .get()
                     .retrieve()

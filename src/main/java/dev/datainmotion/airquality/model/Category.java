@@ -2,6 +2,7 @@ package dev.datainmotion.airquality.model;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -70,25 +71,10 @@ public class Category {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(Category.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
-        sb.append("number");
-        sb.append('=');
-        sb.append(((this.number == null)?"<null>":this.number));
-        sb.append(',');
-        sb.append("name");
-        sb.append('=');
-        sb.append(((this.name == null)?"<null>":this.name));
-        sb.append(',');
-        sb.append("additionalProperties");
-        sb.append('=');
-        sb.append(((this.additionalProperties == null)?"<null>":this.additionalProperties));
-        sb.append(',');
-        if (sb.charAt((sb.length()- 1)) == ',') {
-            sb.setCharAt((sb.length()- 1), ']');
-        } else {
-            sb.append(']');
-        }
-        return sb.toString();
+        return new StringJoiner(", ", Category.class.getSimpleName() + "[", "]")
+                .add("number=" + number)
+                .add("name='" + name + "'")
+                .add("additionalProperties=" + additionalProperties)
+                .toString();
     }
 }
