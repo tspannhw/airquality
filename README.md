@@ -142,7 +142,7 @@ __key,aqi,dateObserved,hourObserved,latitude,localTimeZone,longitude,parameterNa
 
 export AIRPORTNOWAPIURL="https://www.airnowapi.org/aq/observation/zipCode/current/?format=application/json&zipCode=30313&distance=25&API_KEY=THISISMYKEYITISCOOL
 
-[INFO] --- spring-boot-maven-plugin:2.6.6:run (default-cli) @ airquality ---
+[INFO] --- spring-boot-maven-plugin:2.7.0:run (default-cli) @ airquality ---
 [INFO] Attaching agents: []
 
   .   ____          _            __ _ _
@@ -151,7 +151,7 @@ export AIRPORTNOWAPIURL="https://www.airnowapi.org/aq/observation/zipCode/curren
  \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
   '  |____| .__|_| |_|_| |_\__, | / / / /
  =========|_|==============|___/=/_/_/_/
- :: Spring Boot ::                (v2.6.6)
+ :: Spring Boot ::                (v2.7.0)
 
 2022-04-07 14:21:25.852  INFO 74819 --- [           main] d.d.airquality.airquality.AirQualityApp  : Starting AirQualityApp using Java 17.0.1 on Timothys-mbp.fios-router.home with PID 74819 (/Users/tspann/Documents/code/airquality/airquality/target/classes started by tspann in /Users/tspann/Documents/code/airquality/airquality)
 2022-04-07 14:21:25.854  INFO 74819 --- [           main] d.d.airquality.airquality.AirQualityApp  : No active profile set, falling back to 1 default profile: "default"
@@ -242,7 +242,7 @@ key:[7a7f567a-b9d7-470e-992e-86a2c24c9ce8], properties:[], content:{"dateObserve
 
 ### CVE Note
 
-We are using Spring Boot 2.6.6 which does not have this issue.
+We are using Spring Boot 2.7.0 which does not have this issue.
 
 https://thenewstack.io/springshell-brings-hell-to-java-developers/
 
