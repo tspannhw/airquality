@@ -24,8 +24,8 @@ public class AirQualityService {
     WebClient webClient;
 
     @Autowired
-    DataUtility dataUtility;
-    
+    RESTService restService;
+
     /**
      * 
      * @return list of observations from json
@@ -34,12 +34,9 @@ public class AirQualityService {
         List<Observation> obs = null;
 
         try {
-            webClient.mutate().baseUrl(dataUtility.getURL()) ;
-
-            log.error(dataUtility.getURL());
-
             Flux<Observation> observationFlux = webClient
                     .get()
+                    .uri(restService.getURI())
                     .retrieve()
                     .bodyToFlux(Observation.class)
                     .timeout(Duration.ofMillis(10_000));
