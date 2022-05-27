@@ -56,7 +56,8 @@ public class AirQualityApp implements CommandLineRunner {
             return;
         }
         for (Observation observation2 : obsList) {
-            log.info("{}={} for {} {}", observation2.getParameterName(),
+            log.info("{}={} for {} {}",
+                    observation2.getParameterName(),
                     observation2.getAqi(),
                     observation2.getStateCode(),
                     observation2.getReportingArea());
@@ -64,26 +65,26 @@ public class AirQualityApp implements CommandLineRunner {
                 msgId = pulsarService.sendObservation(observation2);
                 log.info("PULSAR {}", msgId.toString());
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("Pulsar Error", e);
             }
             try {
                 mqttService.publish(observation2);
                 log.info("MQTT");
 
             } catch (MqttException e) {
-                e.printStackTrace();
+                log.error("MQTT Error", e);
             }
             try {
                 amqpService.sendObservation(observation2);
                 log.info("AMQP");
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("AMQP Error", e);
             }
             try {
                 kafkaService.sendMessage(observation2);
                 log.info("KAFKA");
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("Kafka Error", e);
             }
         }
     }

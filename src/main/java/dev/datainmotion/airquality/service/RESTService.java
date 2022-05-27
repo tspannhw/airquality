@@ -2,7 +2,6 @@ package dev.datainmotion.airquality.service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-
 import java.util.Random;
 import java.util.StringJoiner;
 

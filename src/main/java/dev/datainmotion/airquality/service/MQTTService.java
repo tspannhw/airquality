@@ -1,7 +1,5 @@
 package dev.datainmotion.airquality.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.datainmotion.airquality.model.Observation;
 import dev.datainmotion.airquality.util.DataUtility;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
@@ -11,8 +9,6 @@ import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.Locale;
 
 /**
  * service for mqtt messages

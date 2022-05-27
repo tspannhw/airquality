@@ -3,12 +3,7 @@ package dev.datainmotion.airquality.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.datainmotion.airquality.model.Observation;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-
 import java.util.Locale;
-import java.util.Random;
-import java.util.StringJoiner;
 
 /**
  *

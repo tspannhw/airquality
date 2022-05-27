@@ -2,16 +2,12 @@ package dev.datainmotion.airquality.service;
 
 import dev.datainmotion.airquality.model.Observation;
 import dev.datainmotion.airquality.util.DataUtility;
-import org.apache.pulsar.client.api.MessageId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 /**
  * send rabbitmq / amqp messages
@@ -28,8 +24,10 @@ public class AMQPService {
 
         public void sendObservation(Observation observation) {
                 if (observation == null) {
+                        log.error("Observation is null");
                         return;
                 }
+                log.debug("topic {}", topicName);
                 rabbitTemplate.convertAndSend(topicName,
                         DataUtility.serializeToJSON(observation));
         }

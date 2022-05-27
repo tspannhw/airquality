@@ -45,7 +45,7 @@ public class PulsarService {
                     .value(observation)
                     .send();
         } catch (PulsarClientException e) {
-            e.printStackTrace();
+            log.error("Pulsar client failure", e);
         }
 
         return msgID;
