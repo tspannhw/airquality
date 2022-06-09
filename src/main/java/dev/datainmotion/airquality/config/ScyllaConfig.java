@@ -62,24 +62,19 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
     @Primary
     public CqlSession session() {
         if (scyllaEnvironment.equalsIgnoreCase(CLOUD)) {
-
-            log.error("Cloud");
             Collection<InetSocketAddress> serverList = new ArrayList<>();
             try {
                 String[] containerIpAddress = getContactPoints().split(",");
                 for (String ipAddress:
                      containerIpAddress) {
-
-                    log.error("IP: {}", ipAddress);
                     InetSocketAddress containerEndPoint = new InetSocketAddress(ipAddress, getPort());
-
-                    log.error("IP creat {} : {}", containerEndPoint.getHostString(), containerEndPoint.getPort());
                     serverList.add(containerEndPoint);
                 }
             } catch (Throwable e) {
                 log.error("Broken ips {}",e);
             }
 
+            log.error("{}={} for {} on {}", scyllaUserName, scyllaPassword, getKeyspaceName(), localDataCenter);
             CqlSessionBuilder builder = CqlSession.builder()
                     .withLocalDatacenter(localDataCenter)
                     .addContactPoints(serverList)
