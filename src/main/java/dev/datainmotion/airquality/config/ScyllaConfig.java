@@ -63,6 +63,11 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
         return scyllaPort;
     }
 
+    protected AuthProvider getAuthProvider() {
+        AuthProvider authProvider = new ProgrammaticPlainTextAuthProvider(scyllaUserName, scyllaPassword);
+        return authProvider;
+    }
+
     @Bean(name = "dbSession")
     @Primary
     public CqlSession session() {
@@ -80,14 +85,11 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
             }
 
             log.error("{}={} for {} on {}", scyllaUserName, scyllaPassword, getKeyspaceName(), localDataCenter);
-
-            AuthProvider authProvider = new ProgrammaticPlainTextAuthProvider(scyllaUserName, scyllaPassword);
-
-            //                    .withAuthCredentials(scyllaUserName, scyllaPassword)
+            
             CqlSessionBuilder builder = CqlSession.builder()
                     .withLocalDatacenter(localDataCenter)
                     .addContactPoints(serverList)
-                    .withAuthProvider(authProvider)
+                    .withAuthCredentials(scyllaUserName, scyllaPassword)
                     .withKeyspace(getKeyspaceName());
 
             return builder.build();
