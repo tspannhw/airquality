@@ -2,11 +2,13 @@ package dev.datainmotion.airquality.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
 import org.springframework.data.cassandra.config.CqlSessionFactoryBean;
 import org.springframework.data.cassandra.config.SchemaAction;
+import org.springframework.data.cassandra.core.CassandraOperations;
 import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
 
 import java.net.InetSocketAddress;
@@ -20,6 +22,7 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
     private static final Logger log = LoggerFactory.getLogger(ScyllaConfig.class);
 
     public static final String CLOUD = "cloud";
+
     @Value("${spring.data.cassandra.keyspace-name:airquality}")
     String keyspace;
 
@@ -37,6 +40,10 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
 
     @Value("${spring.data.cassandra.password:password}")
     String scyllaPassword;
+    
+    @Autowired
+    private CassandraOperations cassandraTemplate;
+
 
 //    @Value("${scylla.local.dc:AWS_US_EAST_1}")
 //    String localDataCenter;
@@ -74,8 +81,6 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
             } catch (Throwable e) {
                 log.error("Broken ips {}",e);
             }
-
-            log.error("{}={} for {} ", scyllaUserName, scyllaPassword, getKeyspaceName());
 
             factory.setUsername(scyllaUserName);
             factory.setPassword(scyllaPassword);
