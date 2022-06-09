@@ -17,7 +17,7 @@ public class Reading
     @Column(value="state_code")
     private String stateCode;
 
-    @PrimaryKey
+    @PrimaryKey(value="reporting_area")
     @Column(value="reporting_area")
     private String reportingArea;
 
