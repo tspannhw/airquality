@@ -20,6 +20,13 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.datastax.oss.driver.api.core.CqlIdentifier;
+import com.datastax.oss.driver.api.core.config.ProgrammaticDriverConfigLoaderBuilder;
+import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
+import com.datastax.oss.driver.api.core.config.DefaultDriverOption;
+import com.datastax.oss.driver.internal.core.auth.PlainTextAuthProvider;
+import com.datastax.oss.driver.api.core.CqlSessionBuilder;
+
 @Configuration
 @EnableCassandraRepositories(
         basePackages = "dev.datainmotion.airquality.repository")
@@ -63,10 +70,6 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
         return scyllaPort;
     }
 
-    protected AuthProvider getAuthProvider() {
-        AuthProvider authProvider = new ProgrammaticPlainTextAuthProvider(scyllaUserName, scyllaPassword);
-        return authProvider;
-    }
 
     @Bean(name = "dbSession")
     @Primary
@@ -86,10 +89,15 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
 
             log.error("{}={} for {} on {}", scyllaUserName, scyllaPassword, getKeyspaceName(), localDataCenter);
 
+            ProgrammaticDriverConfigLoaderBuilder configLoaderBuilder = DriverConfigLoader.programmaticBuilder();
+            configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_CLASS, PlainTextAuthProvider.class.getName());
+            configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_USER_NAME, scyllaUserName);
+            configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_PASSWORD, scyllaPassword);
+
             CqlSessionBuilder builder = CqlSession.builder()
                     .withLocalDatacenter(localDataCenter)
+                    .withConfigLoader(configLoaderBuilder.build())
                     .addContactPoints(serverList)
-                    .withAuthProvider(getAuthProvider())
                     .withKeyspace(getKeyspaceName());
 
             return builder.build();
