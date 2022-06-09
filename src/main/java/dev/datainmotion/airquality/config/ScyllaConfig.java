@@ -85,11 +85,11 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
             }
 
             log.error("{}={} for {} on {}", scyllaUserName, scyllaPassword, getKeyspaceName(), localDataCenter);
-            
+
             CqlSessionBuilder builder = CqlSession.builder()
                     .withLocalDatacenter(localDataCenter)
                     .addContactPoints(serverList)
-                    .withAuthCredentials(scyllaUserName, scyllaPassword)
+                    .withAuthProvider(getAuthProvider())
                     .withKeyspace(getKeyspaceName());
 
             return builder.build();
@@ -99,7 +99,6 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
             CqlSessionBuilder builder = CqlSession.builder()
                     .addContactPoint(localEndPoint)
                     .withKeyspace(getKeyspaceName());
-
             return builder.build();
         }
     }
