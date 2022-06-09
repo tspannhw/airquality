@@ -6,7 +6,8 @@ import org.springframework.data.cassandra.config.SchemaAction;
 import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
 
 @Configuration
-@EnableCassandraRepositories
+@EnableCassandraRepositories(
+        basePackages = "dev.datainmotion.airquality.repository")
 public class ScyllaConfig extends AbstractCassandraConfiguration {
 
     @Value("${spring.data.cassandra.keyspace-name:airquality}")

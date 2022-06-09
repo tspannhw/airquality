@@ -1,7 +1,10 @@
 package dev.datainmotion.airquality.repository;
 
 import dev.datainmotion.airquality.model.Reading;
+import org.springframework.data.cassandra.repository.CassandraRepository;
+import org.springframework.data.cassandra.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,10 +12,20 @@ import java.util.Optional;
 /**
  *
  */
-public interface ReadingRepository extends CrudRepository<Reading, String> {
-    Optional<Reading> findByReadingID(String readingID);
+@Repository
+public interface ReadingRepository extends CassandraRepository<Reading, String> {
+        //CrudRepository<Reading, String> {
+    Optional<Reading> findByReadingid(String readingid);
+
+    @Query(allowFiltering = true)
     Optional<Reading> findByStateCode(String state_code);
-    Optional<Reading> findBymaxpm10(String max_pm10);
-    Optional<Reading> findBymaxozone(String max_ozone);
-    Optional<Reading> findBymaxpm25(String max_pm25);
+
+    @Query(allowFiltering = true)
+    Optional<Reading> findByMaxPm10(String max_pm10);
+
+    @Query(allowFiltering = true)
+    Optional<Reading> findByMaxOzone(String max_ozone);
+
+    @Query(allowFiltering = true)
+    Optional<Reading> findByMaxPm25(String max_pm25);
 }

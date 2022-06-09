@@ -81,7 +81,7 @@ public class AirQualityApp implements CommandLineRunner {
 
             if ( readingRepository != null) {
                 try {
-                    Optional<Reading> result = readingRepository.findByReadingID(msgId.toString());
+                    Optional<Reading> result = readingRepository.findByReadingid(msgId.toString());
 
                     // should find by max and set that
                     if ( result != null) {
