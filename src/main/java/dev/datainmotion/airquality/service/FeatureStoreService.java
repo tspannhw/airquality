@@ -32,8 +32,12 @@ public class FeatureStoreService {
         try {
             if ( observation != null) {
                 reading.setReadingid( msgID );
-                reading.setLatitude( observation.getLatitude());
-                reading.setLongitude( observation.getLongitude());
+                try {
+                    reading.setLatitude( observation.getLatitude().floatValue());
+                    reading.setLongitude( observation.getLongitude().floatValue());
+                } catch (Throwable e) {
+                    log.error("lat/long cast error failed {}",e);
+                }
                 reading.setDateObserved(observation.getDateObserved());
                 reading.setHourObserved(observation.getHourObserved());
                 reading.setLocalTimeZone(observation.getLocalTimeZone());

@@ -55,39 +55,23 @@ public class Reading
     private int hourObserved;
 
     @Column(value="latitude")
-    private double latitude;
+    private float latitude;
 
     @Column(value="longitude")
-    private double longitude;
+    private float longitude;
 
-    /**
-     *
-     * @param readingID
-     * @param local_time_zone
-     * @param state_code
-     * @param reportingArea
-     * @param date_observed
-     * @param avg_ozone
-     * @param minOzone
-     * @param maxOzone
-     * @param avgPm10
-     * @param minPm10
-     * @param maxPm10
-     * @param avgPm25
-     * @param minPm25
-     * @param maxPm25
-     * @param hourObserved
-     * @param latitude
-     * @param longitude
-     */
-    public Reading(String readingID, String local_time_zone, String state_code, String reportingArea, String date_observed, double avg_ozone, double minOzone, double maxOzone, double avgPm10, double minPm10, double maxPm10, double avgPm25, double minPm25, double maxPm25, int hourObserved, double latitude, double longitude) {
+    public Reading() {
         super();
-        this.readingid = readingID;
-        this.localTimeZone = local_time_zone;
-        this.stateCode = state_code;
+    }
+
+    public Reading(String readingid, String localTimeZone, String stateCode, String reportingArea, String dateObserved, double avgOzone, double minOzone, double maxOzone, double avgPm10, double minPm10, double maxPm10, double avgPm25, double minPm25, double maxPm25, int hourObserved, float latitude, float longitude) {
+        super();
+        this.readingid = readingid;
+        this.localTimeZone = localTimeZone;
+        this.stateCode = stateCode;
         this.reportingArea = reportingArea;
-        this.dateObserved = date_observed;
-        this.avgOzone = avg_ozone;
+        this.dateObserved = dateObserved;
+        this.avgOzone = avgOzone;
         this.minOzone = minOzone;
         this.maxOzone = maxOzone;
         this.avgPm10 = avgPm10;
@@ -99,10 +83,6 @@ public class Reading
         this.hourObserved = hourObserved;
         this.latitude = latitude;
         this.longitude = longitude;
-    }
-
-    public Reading() {
-        super();
     }
 
     public String getReadingid() {
@@ -143,22 +123,6 @@ public class Reading
 
     public void setDateObserved(String dateObserved) {
         this.dateObserved = dateObserved;
-    }
-
-    public Reading(double avg_ozone, double minOzone, double maxOzone, double avgPm10, double minPm10, double maxPm10, double avgPm25, double minPm25, double maxPm25, int hourObserved, double latitude, double longitude) {
-        super();
-        this.avgOzone = avg_ozone;
-        this.minOzone = minOzone;
-        this.maxOzone = maxOzone;
-        this.avgPm10 = avgPm10;
-        this.minPm10 = minPm10;
-        this.maxPm10 = maxPm10;
-        this.avgPm25 = avgPm25;
-        this.minPm25 = minPm25;
-        this.maxPm25 = maxPm25;
-        this.hourObserved = hourObserved;
-        this.latitude = latitude;
-        this.longitude = longitude;
     }
 
     @Override
@@ -264,19 +228,19 @@ public class Reading
         this.hourObserved = hourObserved;
     }
 
-    public double getLatitude() {
+    public float getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
+    public void setLatitude(float latitude) {
         this.latitude = latitude;
     }
 
-    public double getLongitude() {
+    public float getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(double longitude) {
+    public void setLongitude(float longitude) {
         this.longitude = longitude;
     }
 }
