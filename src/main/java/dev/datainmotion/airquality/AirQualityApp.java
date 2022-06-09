@@ -83,7 +83,7 @@ public class AirQualityApp implements CommandLineRunner {
                     Optional<Reading> result = readingRepository.findByReportingArea(observation2.getReportingArea());
 
                     if ( result != null && !result.isEmpty() && result.isPresent()) {
-                        log.info("Found existing {}", result.get().toString());
+                        log.info("Found existing {}", result.get().getReportingArea());
                         // add update method or do we just save
                         Reading currentReading = result.get();
                         boolean isSaved = featureStoreService.updateIfMax(observation2,currentReading);
