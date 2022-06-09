@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.io.Resource;
 import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
+import org.springframework.data.cassandra.config.DriverConfigLoaderBuilderConfigurer;
 import org.springframework.data.cassandra.config.SchemaAction;
 import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
 
@@ -70,6 +72,23 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
         return scyllaPort;
     }
 
+    @Override
+    protected Resource getDriverConfigurationResource() {
+        return super.getDriverConfigurationResource();
+    }
+
+    @Override
+    protected DriverConfigLoaderBuilderConfigurer getDriverConfigLoaderBuilderConfigurer() {
+
+        ProgrammaticDriverConfigLoaderBuilder configLoaderBuilder = DriverConfigLoader.programmaticBuilder();
+        configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_CLASS, PlainTextAuthProvider.class.getName());
+        configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_USER_NAME, scyllaUserName);
+        configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_PASSWORD, scyllaPassword);
+
+        DriverConfigLoaderBuilderConfigurer config = super.getDriverConfigLoaderBuilderConfigurer();
+        config.configure(configLoaderBuilder);
+        return config;
+    }
 
     @Bean(name = "dbSession")
     @Primary
@@ -90,12 +109,12 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
             log.error("{}={} for {} on {}", scyllaUserName, scyllaPassword, getKeyspaceName(), localDataCenter);
 
             ProgrammaticDriverConfigLoaderBuilder configLoaderBuilder = DriverConfigLoader.programmaticBuilder();
-            configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_CLASS, PlainTextAuthProvider.class.getSimpleName());
+            configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_CLASS, PlainTextAuthProvider.class.getName());
             configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_USER_NAME, scyllaUserName);
             configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_PASSWORD, scyllaPassword);
 
             log.error("{} {}", PlainTextAuthProvider.class.getSimpleName(), PlainTextAuthProvider.class.getName());
-            
+
             CqlSessionBuilder builder = CqlSession.builder()
                     .withLocalDatacenter(localDataCenter)
                     .withConfigLoader(configLoaderBuilder.build())
