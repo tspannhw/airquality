@@ -94,8 +94,7 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
             configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_CLASS, PlainTextAuthProviderBase.class.getName());
             configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_USER_NAME, scyllaUserName);
             configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_PASSWORD, scyllaPassword);
-
-            AuthProvider
+            
             log.error("{} {}", PlainTextAuthProvider.class.getSimpleName(), PlainTextAuthProvider.class.getName());
 
             CqlSessionBuilder builder = CqlSession.builder()
