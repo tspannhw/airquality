@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
+import org.springframework.data.cassandra.config.CqlSessionFactoryBean;
 import org.springframework.data.cassandra.config.DriverConfigLoaderBuilderConfigurer;
 import org.springframework.data.cassandra.config.SchemaAction;
 import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
@@ -71,10 +72,11 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
     protected int getPort() {
         return scyllaPort;
     }
+    
+    @Bean
+    public CqlSessionFactoryBean getCqlSession() {
+        CqlSessionFactoryBean factory = new CqlSessionFactoryBean();
 
-    @Bean(name = "dbSession")
-    @Primary
-    public CqlSession session() {
         if (scyllaEnvironment.equalsIgnoreCase(CLOUD)) {
             Collection<InetSocketAddress> serverList = new ArrayList<>();
             try {
@@ -90,29 +92,64 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
 
             log.error("{}={} for {} on {}", scyllaUserName, scyllaPassword, getKeyspaceName(), localDataCenter);
 
-            ProgrammaticDriverConfigLoaderBuilder configLoaderBuilder = DriverConfigLoader.programmaticBuilder();
-            configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_CLASS, PlainTextAuthProviderBase.class.getName());
-            configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_USER_NAME, scyllaUserName);
-            configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_PASSWORD, scyllaPassword);
-            
-            log.error("{} {}", PlainTextAuthProvider.class.getSimpleName(), PlainTextAuthProvider.class.getName());
-
-            CqlSessionBuilder builder = CqlSession.builder()
-                    .withLocalDatacenter(localDataCenter)
-                    .withConfigLoader(configLoaderBuilder.build())
-                    .addContactPoints(serverList)
-                    .withKeyspace(getKeyspaceName());
-
-            return builder.build();
+            factory.setUsername(scyllaUserName);
+            factory.setPassword(scyllaPassword);
+            factory.setPort(getPort());
+            factory.setKeyspaceName(getKeyspaceName());
+            factory.setContactPoints(serverList);
+            factory.setLocalDatacenter(getLocalDataCenter());
         }
         else {
-            InetSocketAddress localEndPoint = new InetSocketAddress(getContactPoints(), getPort());
-            CqlSessionBuilder builder = CqlSession.builder()
-                    .addContactPoint(localEndPoint)
-                    .withKeyspace(getKeyspaceName());
-            return builder.build();
+            factory.setPort(getPort());
+            factory.setKeyspaceName(getKeyspaceName());
+            factory.setContactPoints(getContactPoints());
+            factory.setLocalDatacenter(getLocalDataCenter());
         }
+
+        return factory;
     }
+
+//    @Bean(name = "dbSession")
+//    @Primary
+//    public CqlSession session() {
+//        if (scyllaEnvironment.equalsIgnoreCase(CLOUD)) {
+//            Collection<InetSocketAddress> serverList = new ArrayList<>();
+//            try {
+//                String[] containerIpAddress = getContactPoints().split(",");
+//                for (String ipAddress:
+//                     containerIpAddress) {
+//                    InetSocketAddress containerEndPoint = new InetSocketAddress(ipAddress, getPort());
+//                    serverList.add(containerEndPoint);
+//                }
+//            } catch (Throwable e) {
+//                log.error("Broken ips {}",e);
+//            }
+//
+//            log.error("{}={} for {} on {}", scyllaUserName, scyllaPassword, getKeyspaceName(), localDataCenter);
+//
+//            ProgrammaticDriverConfigLoaderBuilder configLoaderBuilder = DriverConfigLoader.programmaticBuilder();
+//            configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_CLASS, PlainTextAuthProviderBase.class.getName());
+//            configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_USER_NAME, scyllaUserName);
+//            configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_PASSWORD, scyllaPassword);
+//
+//            log.error("{} {}", PlainTextAuthProvider.class.getSimpleName(), PlainTextAuthProvider.class.getName());
+//
+//            CqlSessionBuilder builder = CqlSession.builder()
+//                    .withLocalDatacenter(localDataCenter)
+//                    .withConfigLoader(configLoaderBuilder.build())
+//                    .addContactPoints(serverList)
+//                    .withKeyspace(getKeyspaceName());
+//
+//            return builder.build();
+//        }
+//        else {
+//            InetSocketAddress localEndPoint = new InetSocketAddress(getContactPoints(), getPort());
+//            CqlSessionBuilder builder = CqlSession.builder()
+//                    .addContactPoint(localEndPoint)
+//                    .withKeyspace(getKeyspaceName());
+//            return builder.build();
+//        }
+//    }
 
     @Override
     public SchemaAction getSchemaAction() {
