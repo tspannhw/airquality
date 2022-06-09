@@ -1,8 +1,8 @@
 package dev.datainmotion.airquality.config;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.CqlSessionBuilder;
-import com.datastax.oss.driver.api.core.auth.AuthProvider;
-import com.datastax.oss.driver.internal.core.auth.PlainTextAuthProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,12 +12,16 @@ import org.springframework.data.cassandra.config.SchemaAction;
 import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
 
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.Collection;
 
 @Configuration
 @EnableCassandraRepositories(
         basePackages = "dev.datainmotion.airquality.repository")
 public class ScyllaConfig extends AbstractCassandraConfiguration {
+    private static final Logger log = LoggerFactory.getLogger(ScyllaConfig.class);
 
+    public static final String CLOUD = "cloud";
     @Value("${spring.data.cassandra.keyspace-name:airquality}")
     String keyspace;
 
@@ -27,7 +31,7 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
     @Value("${spring.data.cassandra.contact-points:172.17.0.2}")
     String serverName;
 
-    @Value("${scylla.environment:off}")
+    @Value("${scylla.environment:docker}")
     String scyllaEnvironment;
 
     @Value("${spring.data.cassandra.username:scylla}")
@@ -57,15 +61,36 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
     @Bean(name = "dbSession")
     @Primary
     public CqlSession session() {
-        String containerIpAddress = getContactPoints();
-        int containerPort = getPort();
-        InetSocketAddress containerEndPoint = new InetSocketAddress(containerIpAddress, containerPort);
+        if (scyllaEnvironment.equalsIgnoreCase(CLOUD)) {
 
-        CqlSessionBuilder builder = CqlSession.builder().withLocalDatacenter(localDataCenter).addContactPoint(containerEndPoint)
-                .withAuthCredentials(scyllaUserName, scyllaPassword)
-                .withKeyspace(getKeyspaceName());
+            Collection<InetSocketAddress> serverList = new ArrayList<>();
+            try {
+                String[] containerIpAddress = getContactPoints().split(",");
+                for (String ipAddress:
+                     containerIpAddress) {
+                    InetSocketAddress containerEndPoint = new InetSocketAddress(ipAddress, getPort());
+                     serverList.add(containerEndPoint);
+                }
+            } catch (Throwable e) {
+                log.error("Broken ips {}",e);
+            }
 
-        return builder.build();
+            CqlSessionBuilder builder = CqlSession.builder()
+                    .withLocalDatacenter(localDataCenter)
+                    .addContactPoints(serverList)
+                    .withAuthCredentials(scyllaUserName, scyllaPassword)
+                    .withKeyspace(getKeyspaceName());
+
+            return builder.build();
+        }
+        else {
+            InetSocketAddress localEndPoint = new InetSocketAddress(getContactPoints(), getPort());
+            CqlSessionBuilder builder = CqlSession.builder()
+                    .addContactPoint(localEndPoint)
+                    .withKeyspace(getKeyspaceName());
+
+            return builder.build();
+        }
     }
 
     @Override
