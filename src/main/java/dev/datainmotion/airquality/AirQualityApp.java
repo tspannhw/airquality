@@ -25,7 +25,6 @@ import org.springframework.scheduling.annotation.Scheduled;
  */
 @SpringBootApplication
 @EnableScheduling
-@EnableCassandraRepositories
 public class AirQualityApp implements CommandLineRunner {
     private static final Logger log = LoggerFactory.getLogger(AirQualityApp.class);
 
