@@ -79,13 +79,13 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
 
     @Override
     protected DriverConfigLoaderBuilderConfigurer getDriverConfigLoaderBuilderConfigurer() {
+        DriverConfigLoaderBuilderConfigurer config = super.getDriverConfigLoaderBuilderConfigurer();
 
         ProgrammaticDriverConfigLoaderBuilder configLoaderBuilder = DriverConfigLoader.programmaticBuilder();
         configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_CLASS, PlainTextAuthProvider.class.getName());
         configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_USER_NAME, scyllaUserName);
         configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_PASSWORD, scyllaPassword);
 
-        DriverConfigLoaderBuilderConfigurer config = super.getDriverConfigLoaderBuilderConfigurer();
         config.configure(configLoaderBuilder);
         return config;
     }
