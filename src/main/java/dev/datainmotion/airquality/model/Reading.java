@@ -8,7 +8,6 @@ import org.springframework.data.cassandra.core.mapping.Column;
 @Table
 public class Reading
 {
-    @PrimaryKey
     @Column(value="readingid")
     private String readingid;
 
@@ -18,6 +17,7 @@ public class Reading
     @Column(value="state_code")
     private String stateCode;
 
+    @PrimaryKey
     @Column(value="reporting_area")
     private String reportingArea;
 

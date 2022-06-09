@@ -14,8 +14,9 @@ import java.util.Optional;
  */
 @Repository
 public interface ReadingRepository extends CassandraRepository<Reading, String> {
-        //CrudRepository<Reading, String> {
-    Optional<Reading> findByReadingid(String readingid);
+
+    // primary key
+    Optional<Reading> findByReportingArea(String reportingArea);
 
     @Query(allowFiltering = true)
     Optional<Reading> findByStateCode(String state_code);
