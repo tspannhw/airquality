@@ -1,5 +1,7 @@
 package dev.datainmotion.airquality;
 
+import dev.datainmotion.airquality.model.Reading;
+import dev.datainmotion.airquality.repository.ReadingRepository;
 import dev.datainmotion.airquality.service.*;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.boot.SpringApplication;
@@ -7,6 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import dev.datainmotion.airquality.model.Observation;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.pulsar.client.api.MessageId;
 import org.slf4j.Logger;
@@ -46,6 +49,12 @@ public class AirQualityApp implements CommandLineRunner {
     @Autowired
     private KafkaService kafkaService;
 
+    @Autowired
+    ReadingRepository readingRepository;
+
+    @Autowired
+    FeatureStoreService featureStoreService;
+
     /**
      * get rows
      */
@@ -66,6 +75,28 @@ public class AirQualityApp implements CommandLineRunner {
                 log.info("PULSAR {}", msgId.toString());
             } catch (Exception e) {
                 log.error("Pulsar Error", e);
+            }
+
+            if ( readingRepository != null) {
+                try {
+                    Optional<Reading> result = readingRepository.findByReadingID(msgId.toString());
+
+                    // should find by max and set that
+                    if ( result != null) {
+                        log.info("Found existing {}", result.get().toString());
+
+                        // add update method
+                    }
+                    else {
+                        boolean isSaved = featureStoreService.saveObservation(observation2, msgId.toString());
+
+                        log.info("Saved {}", isSaved);
+                    }
+
+                }
+                catch(Exception x) {
+                    log.error("ScyllaDB Error",x);
+                }
             }
             try {
                 mqttService.publish(observation2);
