@@ -38,8 +38,8 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
     @Value("${spring.data.cassandra.password:password}")
     String scyllaPassword;
 
-    @Value("${scylla.local.dc:AWS_US_EAST_1}")
-    String localDataCenter;
+//    @Value("${scylla.local.dc:AWS_US_EAST_1}")
+//    String localDataCenter;
 
     @Override
     protected String getKeyspaceName() {
@@ -75,20 +75,19 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
                 log.error("Broken ips {}",e);
             }
 
-            log.error("{}={} for {} on {}", scyllaUserName, scyllaPassword, getKeyspaceName(), localDataCenter);
+            log.error("{}={} for {} ", scyllaUserName, scyllaPassword, getKeyspaceName());
 
             factory.setUsername(scyllaUserName);
             factory.setPassword(scyllaPassword);
             factory.setPort(getPort());
             factory.setKeyspaceName(getKeyspaceName());
             factory.setContactPoints(serverList);
-            factory.setLocalDatacenter(getLocalDataCenter());
+//            factory.setLocalDatacenter(getLocalDataCenter());
         }
         else {
             factory.setPort(getPort());
             factory.setKeyspaceName(getKeyspaceName());
             factory.setContactPoints(getContactPoints());
-            factory.setLocalDatacenter(getLocalDataCenter());
         }
 
         return factory;
