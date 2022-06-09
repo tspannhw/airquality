@@ -90,10 +90,12 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
             log.error("{}={} for {} on {}", scyllaUserName, scyllaPassword, getKeyspaceName(), localDataCenter);
 
             ProgrammaticDriverConfigLoaderBuilder configLoaderBuilder = DriverConfigLoader.programmaticBuilder();
-            configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_CLASS, PlainTextAuthProvider.class.getName());
+            configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_CLASS, PlainTextAuthProvider.class.getSimpleName());
             configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_USER_NAME, scyllaUserName);
             configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_PASSWORD, scyllaPassword);
 
+            log.error("{} {}", PlainTextAuthProvider.class.getSimpleName(), PlainTextAuthProvider.class.getName());
+            
             CqlSessionBuilder builder = CqlSession.builder()
                     .withLocalDatacenter(localDataCenter)
                     .withConfigLoader(configLoaderBuilder.build())
