@@ -72,24 +72,6 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
         return scyllaPort;
     }
 
-    @Override
-    protected Resource getDriverConfigurationResource() {
-        return super.getDriverConfigurationResource();
-    }
-
-    @Override
-    protected DriverConfigLoaderBuilderConfigurer getDriverConfigLoaderBuilderConfigurer() {
-        DriverConfigLoaderBuilderConfigurer config = super.getDriverConfigLoaderBuilderConfigurer();
-
-        ProgrammaticDriverConfigLoaderBuilder configLoaderBuilder = DriverConfigLoader.programmaticBuilder();
-        configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_CLASS, PlainTextAuthProvider.class.getName());
-        configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_USER_NAME, scyllaUserName);
-        configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_PASSWORD, scyllaPassword);
-
-        config.configure(configLoaderBuilder);
-        return config;
-    }
-
     @Bean(name = "dbSession")
     @Primary
     public CqlSession session() {
@@ -109,10 +91,11 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
             log.error("{}={} for {} on {}", scyllaUserName, scyllaPassword, getKeyspaceName(), localDataCenter);
 
             ProgrammaticDriverConfigLoaderBuilder configLoaderBuilder = DriverConfigLoader.programmaticBuilder();
-            configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_CLASS, PlainTextAuthProvider.class.getName());
+            configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_CLASS, PlainTextAuthProviderBase.class.getName());
             configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_USER_NAME, scyllaUserName);
             configLoaderBuilder.withString(DefaultDriverOption.AUTH_PROVIDER_PASSWORD, scyllaPassword);
 
+            AuthProvider
             log.error("{} {}", PlainTextAuthProvider.class.getSimpleName(), PlainTextAuthProvider.class.getName());
 
             CqlSessionBuilder builder = CqlSession.builder()
