@@ -51,9 +51,6 @@ public class AirQualityApp implements CommandLineRunner {
     private KafkaService kafkaService;
 
     @Autowired
-    ReadingRepository readingRepository;
-
-    @Autowired
     FeatureStoreService featureStoreService;
 
     /**
@@ -78,9 +75,9 @@ public class AirQualityApp implements CommandLineRunner {
                 log.error("Pulsar Error", e);
             }
 
-            if ( readingRepository != null) {
+            if ( featureStoreService != null) {
                 try {
-                    Optional<Reading> result = readingRepository.findByReportingArea(observation2.getReportingArea());
+                    Optional<Reading> result = featureStoreService.findByReportingArea(observation2.getReportingArea());
 
                     if ( result != null && !result.isEmpty() && result.isPresent()) {
                         log.info("Found existing {}", result.get().getReportingArea());
