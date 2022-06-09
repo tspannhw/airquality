@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface ReadingRepository extends CrudRepository<Reading, String> {
     Optional<Reading> findByReadingID(String readingID);
     Optional<Reading> findByStateCode(String state_code);
-    Optional<Reading> findByMaxPm10(String max_pm10);
-    Optional<Reading> findByMaxOzone(String max_ozone);
-    Optional<Reading> findByMaxPm25(String max_pm25);
+    Optional<Reading> findBymax_pm10(String max_pm10);
+    Optional<Reading> findBymax_ozone(String max_ozone);
+    Optional<Reading> findBymax_pm25(String max_pm25);
 }
