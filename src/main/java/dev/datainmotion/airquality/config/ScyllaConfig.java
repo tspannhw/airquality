@@ -1,6 +1,11 @@
 package dev.datainmotion.airquality.config;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.CqlSessionBuilder;
+import com.datastax.oss.driver.api.core.auth.AuthProvider;
+import com.datastax.oss.driver.api.core.auth.PlainTextAuthProviderBase;
+import com.datastax.oss.driver.api.core.auth.ProgrammaticPlainTextAuthProvider;
+import com.datastax.oss.driver.api.core.context.DriverContext;
+import com.datastax.oss.driver.internal.core.auth.PlainTextAuthProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -75,10 +80,14 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
             }
 
             log.error("{}={} for {} on {}", scyllaUserName, scyllaPassword, getKeyspaceName(), localDataCenter);
+
+            AuthProvider authProvider = new ProgrammaticPlainTextAuthProvider(scyllaUserName, scyllaPassword);
+
+            //                    .withAuthCredentials(scyllaUserName, scyllaPassword)
             CqlSessionBuilder builder = CqlSession.builder()
                     .withLocalDatacenter(localDataCenter)
                     .addContactPoints(serverList)
-                    .withAuthCredentials(scyllaUserName, scyllaPassword)
+                    .withAuthProvider(authProvider)
                     .withKeyspace(getKeyspaceName());
 
             return builder.build();
