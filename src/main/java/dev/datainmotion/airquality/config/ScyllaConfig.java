@@ -40,7 +40,7 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
     @Value("${spring.data.cassandra.password:password}")
     String scyllaPassword;
 
-    @Value("${scylla.local.dc:AWS_US_EAST_1")
+    @Value("${scylla.local.dc:AWS_US_EAST_1}")
     String localDataCenter;
 
     @Override
