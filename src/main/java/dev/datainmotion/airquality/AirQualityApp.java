@@ -84,7 +84,6 @@ public class AirQualityApp implements CommandLineRunner {
 
                     if ( result != null && !result.isEmpty() && result.isPresent()) {
                         log.info("Found existing {}", result.get().getReportingArea());
-                        // add update method or do we just save
                         Reading currentReading = result.get();
                         boolean isSaved = featureStoreService.updateIfMax(observation2,currentReading);
                         log.info("Updated to ScyllaDB table {} for ", isSaved,observation2.getReportingArea());
