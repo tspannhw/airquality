@@ -81,19 +81,18 @@ public class AirQualityApp implements CommandLineRunner {
             if ( readingRepository != null) {
                 try {
                     Optional<Reading> result = readingRepository.findByReadingid(msgId.toString());
-
-                    // should find by max and set that
+                    
                     if ( result != null && !result.isEmpty() && result.isPresent()) {
                         log.info("Found existing {}", result.get().toString());
-
-                        // add update method
+                        // add update method or do we just save
+                        Reading currentReading = result.get();
+                        boolean isSaved = featureStoreService.updateIfMax(observation2,currentReading);
+                        log.info("Updated to ScyllaDB table {}", isSaved);
                     }
                     else {
                         boolean isSaved = featureStoreService.saveObservation(observation2, msgId.toString());
-
-                        log.info("Saved {}", isSaved);
+                        log.info("Saved to ScyllaDB table {}", isSaved);
                     }
-
                 }
                 catch(Exception x) {
                     log.error("ScyllaDB Error",x);
@@ -102,7 +101,6 @@ public class AirQualityApp implements CommandLineRunner {
             try {
                 mqttService.publish(observation2);
                 log.info("MQTT");
-
             } catch (MqttException e) {
                 log.error("MQTT Error", e);
             }
