@@ -6,6 +6,7 @@ import dev.datainmotion.airquality.repository.ReadingRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.cassandra.core.CassandraOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -21,6 +22,10 @@ public class FeatureStoreService {
     @Autowired
     ReadingRepository readingRepository;
 
+    @Autowired
+    private CassandraOperations cassandraTemplate;
+
+    
     /**
      *
      * @param reportingArea

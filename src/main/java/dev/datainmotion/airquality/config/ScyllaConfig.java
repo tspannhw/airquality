@@ -45,10 +45,6 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
     @Value("${spring.data.cassandra.password:password}")
     String scyllaPassword;
 
-    @Autowired
-    private CassandraOperations cassandraTemplate;
-
-
 //    @Value("${scylla.local.dc:AWS_US_EAST_1}")
 //    String localDataCenter;
 
@@ -85,7 +81,7 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
     @Override
     public CqlSessionFactoryBean cassandraSession() {
         CqlSessionFactoryBean factory = new CqlSessionFactoryBean();
-        
+
         if (scyllaEnvironment.equalsIgnoreCase(CLOUD)) {
             Collection<InetSocketAddress> serverList = new ArrayList<>();
             try {
