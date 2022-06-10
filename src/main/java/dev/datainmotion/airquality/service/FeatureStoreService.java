@@ -22,10 +22,6 @@ public class FeatureStoreService {
     @Autowired
     ReadingRepository readingRepository;
 
-    @Autowired
-    private CassandraOperations cassandraTemplate;
-
-    
     /**
      *
      * @param reportingArea

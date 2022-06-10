@@ -72,11 +72,11 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
     }
 
 
-    @Bean
-    @ConditionalOnMissingBean
-    public CassandraTemplate cassandraTemplate(CqlSession session) throws Exception {
-        return new CassandraTemplate(session);
-    }
+//    @Bean
+//    @ConditionalOnMissingBean
+//    public CassandraTemplate cassandraTemplate(CqlSession session) throws Exception {
+//        return new CassandraTemplate(session);
+//    }
 
     @Override
     public CqlSessionFactoryBean cassandraSession() {
