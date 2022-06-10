@@ -1,14 +1,18 @@
 package dev.datainmotion.airquality.config;
 
+import com.datastax.oss.driver.api.core.CqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
 import org.springframework.data.cassandra.config.CqlSessionFactoryBean;
 import org.springframework.data.cassandra.config.SchemaAction;
 import org.springframework.data.cassandra.core.CassandraOperations;
+import org.springframework.data.cassandra.core.CassandraTemplate;
 import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
 
 import java.net.InetSocketAddress;
@@ -40,7 +44,7 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
 
     @Value("${spring.data.cassandra.password:password}")
     String scyllaPassword;
-    
+
     @Autowired
     private CassandraOperations cassandraTemplate;
 
@@ -63,12 +67,25 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
         return scyllaPort;
     }
 
-    //    public CqlSession session() {
+
+    public CqlSession session() {
+        return CqlSession.builder()
+                .addContactPoint(InetSocketAddress.createUnresolved(getContactPoints(), 9042))
+                .withAuthCredentials(scyllaUserName, scyllaPassword)
+                .withKeyspace(getKeyspaceName()).build();
+    }
+
+
+    @Bean
+    @ConditionalOnMissingBean
+    public CassandraTemplate cassandraTemplate(CqlSession session) throws Exception {
+        return new CassandraTemplate(session);
+    }
 
     @Override
     public CqlSessionFactoryBean cassandraSession() {
         CqlSessionFactoryBean factory = new CqlSessionFactoryBean();
-
+        
         if (scyllaEnvironment.equalsIgnoreCase(CLOUD)) {
             Collection<InetSocketAddress> serverList = new ArrayList<>();
             try {
