@@ -45,8 +45,8 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
     @Value("${spring.data.cassandra.password:password}")
     String scyllaPassword;
 
-//    @Value("${scylla.local.dc:AWS_US_EAST_1}")
-//    String localDataCenter;
+    @Value("${scylla.local.dc:AWS_US_EAST_1}")
+    String localDataCenter;
 
     @Override
     protected String getKeyspaceName() {
@@ -67,6 +67,7 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
     public CqlSession session() {
         return CqlSession.builder()
                 .addContactPoint(InetSocketAddress.createUnresolved(getContactPoints(), 9042))
+                .withLocalDatacenter(localDataCenter)
                 .withAuthCredentials(scyllaUserName, scyllaPassword)
                 .withKeyspace(getKeyspaceName()).build();
     }
@@ -99,6 +100,7 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
             factory.setPassword(scyllaPassword);
             factory.setPort(getPort());
             factory.setKeyspaceName(getKeyspaceName());
+            factory.setLocalDatacenter(localDataCenter);
             factory.setContactPoints(serverList);
         }
         else {
@@ -109,7 +111,6 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
 
         return factory;
     }
-
 
     @Override
     public SchemaAction getSchemaAction() {
