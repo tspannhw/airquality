@@ -72,13 +72,6 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
                 .withKeyspace(getKeyspaceName()).build();
     }
 
-
-//    @Bean
-//    @ConditionalOnMissingBean
-//    public CassandraTemplate cassandraTemplate(CqlSession session) throws Exception {
-//        return new CassandraTemplate(session);
-//    }
-
     @Override
     public CqlSessionFactoryBean cassandraSession() {
         CqlSessionFactoryBean factory = new CqlSessionFactoryBean();
@@ -107,6 +100,7 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
             factory.setPort(getPort());
             factory.setKeyspaceName(getKeyspaceName());
             factory.setContactPoints(getContactPoints());
+            factory.setLocalDatacenter(localDataCenter);
         }
 
         return factory;

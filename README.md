@@ -223,6 +223,10 @@ key:[7a7f567a-b9d7-470e-992e-86a2c24c9ce8], properties:[], content:{"dateObserve
 
 ````
 
+### Connecting to Data for Updates/Lookup - ScyllaDB
+
+* https://github.com/tspannhw/airquality-datastore
+
 ### Resources
 
 * https://docs.airnowapi.org/
