@@ -97,6 +97,7 @@ public class ScyllaConfig extends AbstractCassandraConfiguration {
             factory.setContactPoints(serverList);
         }
         else {
+            log.error("Local mode");
             factory.setPort(getPort());
             factory.setKeyspaceName(getKeyspaceName());
             factory.setContactPoints(getContactPoints());
