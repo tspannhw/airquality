@@ -183,6 +183,8 @@ CREATE CATALOG pulsar WITH (
 
 USE CATALOG pulsar;
 
+set table.dynamic-table-options.enabled = true;
+
 SHOW TABLES;
 
 Flink SQL> describe airquality;
