@@ -1,22 +1,14 @@
 package dev.datainmotion.airquality;
 
-import dev.datainmotion.airquality.model.Reading;
-import dev.datainmotion.airquality.repository.ReadingRepository;
 import dev.datainmotion.airquality.service.*;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import dev.datainmotion.airquality.model.Observation;
-
 import java.util.List;
-import java.util.Optional;
-
-import org.apache.pulsar.client.api.MessageId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -39,26 +31,13 @@ public class AirQualityApp implements CommandLineRunner {
     private AirQualityService airQualityService;
 
     @Autowired
-    private MQTTService mqttService;
-
-    @Autowired
-    private PulsarService pulsarService;
-
-    @Autowired
-    private AMQPService amqpService;
-
-    @Autowired
     private KafkaService kafkaService;
-
-    @Autowired
-    FeatureStoreService featureStoreService;
 
     /**
      * get rows
      */
     private void getRows() {
         List<Observation> obsList = airQualityService.fetchCurrentObservation();
-        MessageId msgId = null;
         if (obsList == null || obsList.size() <= 0) {
             return;
         }
@@ -69,46 +48,8 @@ public class AirQualityApp implements CommandLineRunner {
                     observation2.getStateCode(),
                     observation2.getReportingArea());
             try {
-                msgId = pulsarService.sendObservation(observation2);
-                log.info("PULSAR {}", msgId.toString());
-            } catch (Exception e) {
-                log.error("Pulsar Error", e);
-            }
-
-            if ( featureStoreService != null) {
-                try {
-                    Optional<Reading> result = featureStoreService.findByReportingArea(observation2.getReportingArea());
-
-                    if ( result != null && !result.isEmpty() && result.isPresent()) {
-                        log.info("Found existing {}", result.get().getReportingArea());
-                        Reading currentReading = result.get();
-                        boolean isSaved = featureStoreService.updateIfMax(observation2,currentReading);
-                        log.info("Updated to ScyllaDB table {} for ", isSaved,observation2.getReportingArea());
-                    }
-                    else {
-                        boolean isSaved = featureStoreService.saveObservation(observation2, msgId.toString());
-                        log.info("Saved to ScyllaDB table {} - {}", isSaved,observation2.getReportingArea());
-                    }
-                }
-                catch(Exception x) {
-                    log.error("ScyllaDB Error",x);
-                }
-            }
-            try {
-                mqttService.publish(observation2);
-                log.info("MQTT");
-            } catch (MqttException e) {
-                log.error("MQTT Error", e);
-            }
-            try {
-                amqpService.sendObservation(observation2);
-                log.info("AMQP");
-            } catch (Exception e) {
-                log.error("AMQP Error", e);
-            }
-            try {
                 kafkaService.sendMessage(observation2);
-                log.info("KAFKA");
+                log.info("Kafka message sent.");
             } catch (Exception e) {
                 log.error("Kafka Error", e);
             }

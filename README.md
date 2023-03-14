@@ -1,7 +1,5 @@
 ## airquality
 
-Example code for Spring IO 2022 Barcelona, Spain
-
 Timothy Spann
 
 ### Setup
